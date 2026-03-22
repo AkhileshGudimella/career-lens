@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/career-lens/sw.js', { scope: '/career-lens/' })})}
