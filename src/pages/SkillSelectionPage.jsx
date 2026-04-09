@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import SkillBadge from '../components/SkillBadge';
-import { Search, ChevronRight, Brain } from 'lucide-react';
+import { Search, ChevronRight, Brain, Upload } from 'lucide-react';
 import './SkillSelectionPage.css';
 
 const MOCK_SKILLS = [
@@ -24,6 +24,21 @@ const SkillSelectionPage = ({ onComplete }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
   const [selectedSkills, setSelectedSkills] = useState({});
+  const [isParsing, setIsParsing] = useState(false);
+
+  const simulateResumeParsing = () => {
+    setIsParsing(true);
+    setTimeout(() => {
+      const parsedMatches = {
+        'python': { id: 'python', name: 'Python', category: 'Language', icon: '🐍', level: 2 },
+        'react': { id: 'react', name: 'React', category: 'Frontend', icon: '⚛️', level: 3 },
+        'sql': { id: 'sql', name: 'SQL', category: 'Database', icon: '💾', level: 2 },
+        'aws': { id: 'aws', name: 'AWS', category: 'Cloud', icon: '☁️', level: 1 }
+      };
+      setSelectedSkills(prev => ({ ...prev, ...parsedMatches }));
+      setIsParsing(false);
+    }, 2000);
+  };
 
   const handleSkillClick = (skill) => {
     setSelectedSkills(prev => {
@@ -55,12 +70,27 @@ const SkillSelectionPage = ({ onComplete }) => {
   return (
     <div className="skills-page animate-slide-up">
       <div className="skills-header">
-        <div className="header-content">
-          <div className="subtitle-badge">
-            <Brain size={14} /> Step 1: Skill Profile
+        <div className="header-top-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '24px' }}>
+          <div className="header-content">
+            <div className="subtitle-badge">
+              <Brain size={14} /> Step 1: Skill Profile
+            </div>
+            <h2>What are your core <span className="text-gradient">skills</span>?</h2>
+            <p className="text-muted">Select the technologies you know and set your proficiency level.</p>
           </div>
-          <h2>What are your core <span className="text-gradient">skills</span>?</h2>
-          <p className="text-muted">Select the technologies you know and set your proficiency level.</p>
+          
+          <button 
+            className="btn-outline upload-btn" 
+            onClick={simulateResumeParsing}
+            disabled={isParsing}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 20px', borderRadius: '12px', background: 'rgba(99, 102, 241, 0.1)', borderColor: 'var(--primary)', color: 'white' }}
+          >
+            {isParsing ? (
+               <><span style={{ animation: 'spin 1s linear infinite' }}>🔄</span> Parsing PDF...</>
+            ) : (
+              <><Upload size={18} className="text-secondary" /> Auto-fill from Resume</>
+            )}
+          </button>
         </div>
         
         <div className="search-bar">

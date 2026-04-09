@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import GlassCard from '../components/GlassCard';
 import ProgressBar from '../components/ProgressBar';
 import RadialChart from '../components/RadialChart';
+import InteractivePath from '../components/InteractivePath';
 import { Briefcase, Activity, Target, ExternalLink, Lightbulb, TrendingUp, GitMerge, ChevronDown, ChevronUp } from 'lucide-react';
 import './DashboardPage.css';
 
@@ -116,18 +117,8 @@ const DashboardPage = ({ results, onRestart }) => {
           </GlassCard>
 
           <GlassCard className="improvement-card mt-6">
-            <h3 className="section-title"><TrendingUp className="text-primary"/> Growth Path</h3>
-            <div className="timeline">
-              {results.improvements.map((imp, idx) => (
-                <div key={idx} className="timeline-item">
-                  <div className="timeline-dot"></div>
-                  <div className="timeline-content">
-                    <h5 className="text-primary">{imp.skill}</h5>
-                    <p className="text-muted">{imp.reason}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <h3 className="section-title"><TrendingUp className="text-primary"/> Interactive Growth Path</h3>
+            <InteractivePath improvements={results.improvements} />
           </GlassCard>
           
           <GlassCard className="mt-6 info-card">
