@@ -109,10 +109,19 @@ const DashboardPage = ({ results, onRestart }) => {
           <GlassCard className="analytics-card">
             <h3 className="section-title"><Activity className="text-secondary"/> Overall Readiness</h3>
             <div className="radial-container">
-              <RadialChart percentage={82} size={160} strokeWidth={12} color="var(--success)"/>
+              <RadialChart 
+                percentage={results.overallReadiness} 
+                size={160} 
+                strokeWidth={12} 
+                color={results.overallReadiness >= 80 ? "var(--success)" : results.overallReadiness >= 60 ? "var(--warning)" : "var(--primary)"}
+              />
             </div>
             <p className="analytics-desc text-muted mt-4 text-center">
-              You are highly competitive for mid-level technical roles based on current market trends.
+              {results.overallReadiness >= 80 
+                ? "You are highly competitive for mid-level technical roles based on current market trends." 
+                : results.overallReadiness >= 60
+                ? "You have a solid foundation. Expanding your skill set slightly will make you highly competitive."
+                : "Focus on building core technical skills to improve your market readiness."}
             </p>
           </GlassCard>
 

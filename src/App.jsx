@@ -18,97 +18,85 @@ function App() {
     navigateTo('processing');
     
     setTimeout(() => {
-      // Determine categories based on skills
-      const hasFrontend = skills.some(s => ['react', 'figma', 'js', 'git'].includes(s.id));
-      const hasBackend = skills.some(s => ['nodejs', 'java', 'csharp', 'sql', 'python'].includes(s.id));
-      const hasData = skills.some(s => ['python', 'ml', 'sql'].includes(s.id));
-      const hasCloud = skills.some(s => ['aws', 'docker'].includes(s.id));
+      // Dynamic scoring system
+      const scores = {
+        'Data Science & ML': { score: 0, roles: [{ title: 'Machine Learning Engineer', gap: 'Advanced Deep Learning concepts' }, { title: 'Data Scientist', gap: 'Business BI Tools' }, { title: 'Data Analyst', gap: 'Advanced Statistics' }], improvements: [{ skill: 'Deep Learning', reason: 'Required for advanced AI roles.' }, { skill: 'Spark / Hadoop', reason: 'Essential for large scale data engineering.' }] },
+        'Frontend Engineering': { score: 0, roles: [{ title: 'Frontend Developer', gap: 'Complex State Management' }, { title: 'UI Engineer', gap: 'Accessibility (a11y) standards' }], improvements: [{ skill: 'TypeScript', reason: 'Modern standard for robust frontend applications.' }, { skill: 'Next.js', reason: 'Industry standard for SSR.' }] },
+        'Backend Engineering': { score: 0, roles: [{ title: 'Backend Developer', gap: 'System Design Patterns' }, { title: 'API Engineer', gap: 'GraphQL integration' }], improvements: [{ skill: 'System Design', reason: 'Required for senior/architect roles.' }, { skill: 'Microservices', reason: 'Crucial for scalable backend architectures.' }] },
+        'DevOps & Cloud': { score: 0, roles: [{ title: 'Cloud Architect', gap: 'Kubernetes orchestration' }, { title: 'DevOps Engineer', gap: 'CI/CD pipeline mastery' }], improvements: [{ skill: 'Terraform', reason: 'Industry standard for Infrastructure as Code.' }, { skill: 'Kubernetes', reason: 'Essential for container orchestration.' }] },
+        'UI/UX Design': { score: 0, roles: [{ title: 'Product Designer', gap: 'User Research methodologies' }, { title: 'UX Engineer', gap: 'Prototyping tools' }], improvements: [{ skill: 'Framer', reason: 'High-fidelity interactive prototyping.' }, { skill: 'User Testing', reason: 'Validating design decisions.' }] },
+        'Full Stack Engineering': { score: 0, roles: [{ title: 'Full Stack Developer', gap: 'Advanced system scaling' }, { title: 'Product Engineer', gap: 'End-to-end performance optimization' }], improvements: [{ skill: 'System Architecture', reason: 'Crucial for leading full-stack projects.' }, { skill: 'CI/CD', reason: 'Automating deployment pipelines.' }] }
+      };
 
-      let streams = [];
-      let roles = [];
-      let improvements = [];
+      const skillIds = skills.map(s => s.id);
+      
+      // Calculate scores based on weights
+      if (skillIds.includes('python')) { scores['Data Science & ML'].score += 30; scores['Backend Engineering'].score += 15; }
+      if (skillIds.includes('ml')) { scores['Data Science & ML'].score += 45; }
+      if (skillIds.includes('sql')) { scores['Data Science & ML'].score += 20; scores['Backend Engineering'].score += 20; scores['Full Stack Engineering'].score += 15; }
+      if (skillIds.includes('react')) { scores['Frontend Engineering'].score += 40; scores['Full Stack Engineering'].score += 20; }
+      if (skillIds.includes('js')) { scores['Frontend Engineering'].score += 30; scores['Full Stack Engineering'].score += 20; }
+      if (skillIds.includes('git')) { scores['Frontend Engineering'].score += 10; scores['Backend Engineering'].score += 10; scores['Full Stack Engineering'].score += 10; }
+      if (skillIds.includes('figma')) { scores['UI/UX Design'].score += 50; scores['Frontend Engineering'].score += 10; }
+      if (skillIds.includes('docker')) { scores['DevOps & Cloud'].score += 40; scores['Backend Engineering'].score += 10; }
+      if (skillIds.includes('aws')) { scores['DevOps & Cloud'].score += 40; scores['Backend Engineering'].score += 15; }
+      if (skillIds.includes('nodejs')) { scores['Backend Engineering'].score += 40; scores['Full Stack Engineering'].score += 20; }
+      if (skillIds.includes('java')) { scores['Backend Engineering'].score += 35; }
+      if (skillIds.includes('csharp')) { scores['Backend Engineering'].score += 35; }
 
-      if (hasData && !hasFrontend) {
-        streams = [
-          { name: 'Data Science & ML', match: 94 },
-          { name: 'Data Engineering', match: 88 },
-          { name: 'Backend Engineering', match: 72 }
-        ];
-        roles = [
-          { title: 'Machine Learning Engineer', readiness: 'High', gap: 'Advanced Deep Learning concepts' },
-          { title: 'Data Scientist', readiness: 'High', gap: 'Business BI Tools' },
-          { title: 'Data Analyst', readiness: 'Medium', gap: 'Advanced Statistics' }
-        ];
-        improvements = [
-          { skill: 'Spark / Hadoop', reason: 'Essential for large scale data engineering.' },
-          { skill: 'Deep Learning', reason: 'Required for advanced AI roles.' }
-        ];
-      } else if (hasFrontend && !hasBackend) {
-        streams = [
-          { name: 'Frontend Engineering', match: 95 },
-          { name: 'UI/UX Design', match: 85 },
-          { name: 'Full Stack Engineering', match: 60 }
-        ];
-        roles = [
-          { title: 'Frontend Developer', readiness: 'High', gap: 'Complex State Management' },
-          { title: 'UI Engineer', readiness: 'High', gap: 'Accessibility (a11y) standards' },
-          { title: 'Web Designer', readiness: 'Medium', gap: 'Advanced animation libraries' }
-        ];
-        improvements = [
-          { skill: 'TypeScript', reason: 'Modern standard for robust frontend applications.' },
-          { skill: 'Next.js', reason: 'Industry standard for React-based static generation & SSR.' }
-        ];
-      } else if (hasBackend && !hasFrontend) {
-        streams = [
-          { name: 'Backend Engineering', match: 96 },
-          { name: 'Cloud Architecture', match: 82 },
-          { name: 'DevOps', match: 75 }
-        ];
-        roles = [
-          { title: 'Backend Developer', readiness: 'High', gap: 'System Design Patterns' },
-          { title: 'API Engineer', readiness: 'High', gap: 'GraphQL integration' },
-          { title: 'Cloud Engineer', readiness: 'Medium', gap: 'Infrastructure as Code' }
-        ];
-        improvements = [
-          { skill: 'Docker/Kubernetes', reason: 'Critical for deploying ML models and backend services.' },
-          { skill: 'System Design', reason: 'Required for senior/architect roles in software engineering.' }
-        ];
-      } else if (hasCloud) {
-        streams = [
-          { name: 'DevOps & Cloud', match: 94 },
-          { name: 'Backend Engineering', match: 85 },
-          { name: 'SRE', match: 80 }
-        ];
-        roles = [
-          { title: 'Cloud Architect', readiness: 'Medium', gap: 'Kubernetes orchestration' },
-          { title: 'DevOps Engineer', readiness: 'High', gap: 'CI/CD pipeline mastery' },
-          { title: 'Backend Developer', readiness: 'High', gap: 'Microservices design' }
-        ];
-        improvements = [
-          { skill: 'Terraform', reason: 'Industry standard for Infrastructure as Code.' },
-          { skill: 'Kubernetes', reason: 'Essential for container orchestration at scale.' }
-        ];
-      } else {
-        // Fallback or Full Stack
-        streams = [
-          { name: 'Full Stack Engineering', match: 92 },
-          { name: 'Software Engineering', match: 88 },
-          { name: 'Product Engineering', match: 81 }
-        ];
-        roles = [
-          { title: 'Full Stack Developer', readiness: 'High', gap: 'Advanced system scaling' },
-          { title: 'Software Engineer', readiness: 'High', gap: 'Performance optimization' },
-          { title: 'Tech Lead', readiness: 'Medium', gap: 'Team management & architecture' }
-        ];
-        improvements = [
-          { skill: 'System Architecture', reason: 'Crucial for leading full-stack projects.' },
-          { skill: 'CI/CD', reason: 'Automating deployment pipelines.' }
-        ];
+      // Full Stack bonus if both frontend and backend are selected
+      const hasFrontend = skillIds.some(id => ['react', 'js'].includes(id));
+      const hasBackend = skillIds.some(id => ['nodejs', 'java', 'csharp', 'python'].includes(id));
+      if (hasFrontend && hasBackend) {
+        scores['Full Stack Engineering'].score += 40;
       }
 
-      setResults({ skills, streams, roles, improvements });
+      // Add baseline randomness/base score to all to maintain UI values
+      Object.keys(scores).forEach(key => {
+        scores[key].score = Math.min(98, Math.max(45, scores[key].score + 40));
+      });
+
+      // Sort categories by score
+      const sortedStreams = Object.entries(scores)
+        .map(([name, data]) => ({ name, match: data.score, roles: data.roles, improvements: data.improvements }))
+        .sort((a, b) => b.match - a.match);
+
+      const topStreams = sortedStreams.slice(0, 3);
+      
+      // Calculate dynamic readiness score based on average match of the top 2 streams + skills count bonus
+      const averageMatch = (topStreams[0].match + topStreams[1].match) / 2;
+      const overallReadiness = Math.min(98, Math.max(40, Math.round((averageMatch * 0.8) + (skills.length * 3))));
+      
+      const getReadinessLabel = (score) => {
+        if (score > 85) return 'High';
+        if (score > 70) return 'Medium';
+        return 'Low';
+      };
+
+      let combinedRoles = [];
+      let combinedImprovements = [];
+      topStreams.forEach(stream => {
+        stream.roles.forEach(role => {
+          if (combinedRoles.length < 4) {
+            combinedRoles.push({ title: role.title, readiness: getReadinessLabel(stream.match), gap: role.gap });
+          }
+        });
+        stream.improvements.forEach(imp => {
+          if (combinedImprovements.length < 3 && !combinedImprovements.find(i => i.skill === imp.skill)) {
+            combinedImprovements.push(imp);
+          }
+        });
+      });
+
+      setResults({ 
+        skills, 
+        streams: topStreams.map(s => ({ name: s.name, match: Math.round(s.match) })), 
+        roles: combinedRoles.slice(0, 3), 
+        improvements: combinedImprovements.slice(0, 3),
+        overallReadiness
+      });
       navigateTo('dashboard');
-    }, 4000);
+    }, 2500);
   };
 
   return (
